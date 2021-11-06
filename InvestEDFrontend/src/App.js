@@ -45,13 +45,11 @@ class App extends Component {
         .then(_ => {
           alert("Upload successful.");
         })
-        .catch(error => {
-          console.log(JSON.stringify(error));
+        .catch(_ => {
           alert("Upload failed. Check console logs for details.");
         })
       })
-      .catch(error => {
-        console.log(JSON.stringify(error));
+      .catch(_ => {
         alert("Upload failed. Check console logs for details.");
       })
     }
