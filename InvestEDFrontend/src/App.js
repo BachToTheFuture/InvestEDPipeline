@@ -31,8 +31,7 @@ class App extends Component {
         fileType : fileType
       })
       .then(response => {
-        var returnData = response.data.data.returnData;
-        var signedRequest = returnData.signedRequest;
+        var signedRequest = response.data.data;
         console.log("Recieved a signed request " + signedRequest);
         
       // Put the fileType in the headers for the upload
