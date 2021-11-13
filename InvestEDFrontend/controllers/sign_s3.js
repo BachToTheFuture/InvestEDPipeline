@@ -27,12 +27,8 @@ s3.getSignedUrl('putObject', s3Params, (err, data) => {
       console.log(err);
       res.json({success: false, error: err});
     }
-    // Data payload of what we are sending back, the url of the signedRequest and a URL where we can access the content after its saved.
-    const returnData = {
-      signedRequest: data,
-      url: `https://${S3_BUCKET}.s3.amazonaws.com/${fileName}`
-    };
-    res.json({success:true, data:{returnData}});
+    // Data payload includes the URL of the signedRequest
+    res.json({success: true, data: data});
   });
 }
 
