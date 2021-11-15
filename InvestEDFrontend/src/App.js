@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
+import axios from 'axios';
+
 
 class App extends Component {
   constructor(props){
     super(props);
     this.fileInput = React.createRef();
     this.form = React.createRef();
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   // Perform the upload
@@ -15,45 +18,40 @@ class App extends Component {
     let fileParts = file.name.split('.');
     let fileName = fileParts[0];
     let fileType = fileParts[1];
-    console.log(fileName, fileType);
 
     // Prepare upload to S3
     console.log("Preparing the upload...");
     if (fileType !== "csv") {
       alert("File must be a CSV.")
     } else {
-      alert("Upload Success")
       this.form.current.reset()
+      // Below depends on AWS
+      axios.post("http://localhost:3001/sign_s3",{
+        fileName : fileName,
+        fileType : fileType
+      })
+      .then(response => {
+        var signedRequest = response.data.data;
+        console.log("Recieved a signed request " + signedRequest);
+        
+      // Put the fileType in the headers for the upload
+        var options = {
+          headers: {
+            'Content-Type': fileType
+          }
+        };
+        axios.put(signedRequest, file, options)
+        .then(_ => {
+          alert("Upload successful.");
+        })
+        .catch(_ => {
+          alert("Upload failed. Check console logs for details.");
+        })
+      })
+      .catch(_ => {
+        alert("Upload failed. Check console logs for details.");
+      })
     }
-    
-    // Below depends on AWS
-    // axios.post("http://localhost:3001/sign_s3",{
-    //   fileName : fileName,
-    //   fileType : fileType
-    // })
-    // .then(response => {
-    //   var returnData = response.data.data.returnData;
-    //   var signedRequest = returnData.signedRequest;
-    //   console.log("Recieved a signed request " + signedRequest);
-      
-    //  // Put the fileType in the headers for the upload
-    //   var options = {
-    //     headers: {
-    //       'Content-Type': fileType
-    //     }
-    //   };
-    //   axios.put(signedRequest, file, options)
-    //   .then(result => {
-    //     console.log("Response from s3");
-    //     alert("Upload Success");
-    //   })
-    //   .catch(error => {
-    //     alert("ERROR " + JSON.stringify(error));
-    //   })
-    // })
-    // .catch(error => {
-    //   alert(JSON.stringify(error));
-    // })
   }
   
   render() {
@@ -61,9 +59,9 @@ class App extends Component {
       <div className="App">
         <p>
           Please select and upload a CSV file (must have the .csv file extension, not .xlsx) to 
-          the form below. The CSV must have the following column headers: Student ID, School Name, 
-          First Name, Last Name, Gender, Ethnicity, Grade Level, Enrollment Status, # of Absences, 
-          Days in Attendance, GPA.
+          the form below. The CSV must have the following column headers: student_id, school_name, 
+          first_name, last_name, gender, ethnicity, grade, enrollment_status, absences, 
+          days_in_attendance, GPA.
         </p>
         <form onSubmit={this.handleSubmit} ref={this.form}>
           <label>Upload file:
