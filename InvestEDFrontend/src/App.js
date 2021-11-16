@@ -61,7 +61,7 @@ class App extends Component {
           Please select and upload a CSV file (must have the .csv file extension, not .xlsx) to 
           the form below. The CSV must have the following column headers: student_id, school_name, 
           first_name, last_name, gender, ethnicity, grade, enrollment_status, absences, 
-          days_in_attendance, GPA.
+          days_in_attendance, gpa.
         </p>
         <form onSubmit={this.handleSubmit} ref={this.form}>
           <label>Upload file:
