@@ -56,12 +56,12 @@ def lambda_handler(event, context):
             
         # Define different possible error messages
         ethnicity_e = "Invalid 'ethnicty' value. Ethnicity field should contain one of the following: American Indian or Alaskan Native, Asian or Asian American, Black or African American, Hawaiian Native or Other Pacific Islander, Hispanic, Other, Two or more Races, White or Caucasian."
-        gender_e = "Invalid 'gender' value. Gender vield should contain one of the following: Male, Female, Non-Binary."
-        status_e = "Invalid 'enrollment_status' value. Enrollment status should contain one of the following: Active, Not Active."
-        grade_e = "Invalid 'grade' value. Grade must be an integer."
-        absences_e = "Invalid 'absences' value. Absences must be an integer."
-        attendance_e = "Invalid 'days_in_attendance' value. Days in attendance must be an integer."
-        gpa_e = "Invalid 'gpa' value. GPA must be a number."
+        gender_e = "Invalid 'gender' value. Gender field should contain one of the following: Male, Female, Non-Binary."
+        status_e = "Invalid 'enrollment_status' value. Enrollment status field should contain one of the following: Active, Not Active."
+        grade_e = "Invalid 'grade' value. Grade field must be an integer."
+        absences_e = "Invalid 'absences' value. Absences field must be an integer."
+        attendance_e = "Invalid 'days_in_attendance' value. Days in attendance field must be an integer."
+        gpa_e = "Invalid 'gpa' value. GPA field must be a number."
         
         # Perform checks
         error = ''
