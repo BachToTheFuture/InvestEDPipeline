@@ -5,6 +5,8 @@ import axios from 'axios';
 class UploadForm extends Component {
   constructor(props){
     super(props);
+    this.yearInput = React.createRef();
+    this.termInput = React.createRef();
     this.fileInput = React.createRef();
     this.form = React.createRef();
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -27,8 +29,10 @@ class UploadForm extends Component {
       this.form.current.reset()
       // Below depends on AWS
       axios.post("http://localhost:3001/sign_s3",{
-        fileName : fileName,
-        fileType : fileType
+        fileName: fileName,
+        fileType: fileType,
+        academicYear: this.yearInput.current.value,
+        academicTerm: this.termInput.current.value,
       })
       .then(response => {
         var signedRequest = response.data.data;
@@ -37,7 +41,9 @@ class UploadForm extends Component {
       // Put the fileType in the headers for the upload
         var options = {
           headers: {
-            'Content-Type': fileType
+            'Content-Type': fileType,
+            'x-amz-meta-academic-year': this.yearInput.current.value,
+            'x-amz-meta-academic-term': this.termInput.current.value
           }
         };
         axios.put(signedRequest, file, options)
@@ -64,6 +70,30 @@ class UploadForm extends Component {
           days_in_attendance, GPA.
         </p>
         <form onSubmit={this.handleSubmit} ref={this.form}>
+          <label>Academic Year:
+            <select ref={this.yearInput} name="year" id="year">
+              <option value="2022">2021-2022</option>
+              <option value="2021">2020-2021</option>
+              <option value="2020">2019-2020</option>
+              <option value="2019">2018-2019</option>
+            </select>
+          </label>
+          <br/>
+          <label>Academic Term:
+            <select ref={this.termInput} name="term" id="term">
+              <option value="full_year">Full Year </option>
+              <option value="semester-1">Semester 1</option>
+              <option value="semester-2">Semester 2</option>
+              <option value="trimester-1">Trimester 1</option>
+              <option value="trimester-2">Trimester 2</option>
+              <option value="trimester-3">Trimester 3</option>
+              <option value="quarter-1">Quarter 1</option>
+              <option value="quarter-2">Quarter 2</option>
+              <option value="quarter-3">Quarter 3</option>
+              <option value="quarter-4">Quarter 4</option>
+            </select>
+          </label>
+          <br/>
           <label>Upload file:
             <input ref={this.fileInput} type="file" accept=".csv"/>
           </label>
