@@ -61,8 +61,27 @@ class UploadForm extends Component {
           Please select and upload a CSV file (must have the .csv file extension, not .xlsx) to 
           the form below. The CSV must have the following column headers: student_id, school_name, 
           first_name, last_name, gender, ethnicity, grade, enrollment_status, absences, 
-          days_in_attendance, GPA.
+          days_in_attendance, gpa.
         </p>
+        <ul>
+          <li>
+            'ethnicity' field should contain one of the following: American Indian or Alaskan Native, 
+            Asian or Asian American, Black or African American, Hawaiian Native or Other Pacific Islander, 
+            Hispanic, Other, Two or more Races, White or Caucasian.
+          </li>
+          <li>
+            'gender' field should contain one of the following: Male, Female, Non-Binary.
+          </li>
+          <li>
+            'enrollment_status' field should contain one of the following: Active, Not Active.
+          </li>
+          <li>
+            'grade', 'absences', and 'days_in_attendance' fields must be integers. 
+          </li>
+          <li>
+            'gpa' field must be a number.
+          </li>
+        </ul>
         <form onSubmit={this.handleSubmit} ref={this.form}>
           <label>Upload file:
             <input ref={this.fileInput} type="file" accept=".csv"/>
