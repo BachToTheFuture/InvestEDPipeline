@@ -14,7 +14,7 @@ const S3_BUCKET = process.env.Bucket;
 exports.sign_s3 = (req,res) => {
   const s3 = new aws.S3();  // Create a new instance of S3
   metadata = {
-    'academic-year': req.body.academicYear, 
+    'academic-year': req.body.academicYear,
     'academic-term': req.body.academicTerm
   }
 // Set up the payload of what we are sending to the S3 api
