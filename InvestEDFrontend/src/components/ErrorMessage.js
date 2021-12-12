@@ -37,7 +37,7 @@ class ErrorMessage extends Component {
       }),
       LatestUploadQuery: `
         query LatestUpload {
-          students_csv_uploads(limit: 1, order_by: {time_uploaded: asc}) {
+          students_csv_uploads(limit: 1, order_by: {time_uploaded: desc}) {
             filename
             error
             formatted_properly
