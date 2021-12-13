@@ -53,15 +53,26 @@ def lambda_handler(event, context):
         for db_col in db_columns:
             if db_col not in df.columns:
                 df[db_col] = ''
-            
+                print(response["Metadata"]["academic-year"])
+        
+        # Add column for academic term tracking
+        if "academic-year" in response["Metadata"]:
+            df['academic_year'] = response["Metadata"]["academic-year"]
+        if "academic-term" in response["Metadata"]:
+            acceptable_term_types = {"full_year", "trimester", "semester", "quarter"}
+            term_parts = response["Metadata"]["academic-term"].split('-')
+            if term_parts[0] in acceptable_term_types and int(term_parts[1]) >= 1 and int(term_parts[1]) <= 4:
+                df['term_type'] = term_parts[0]
+                df['academic_term'] = int(term_parts[1])
+
         # Define different possible error messages
-        ethnicity_e = "Invalid 'ethnicty' value. Ethnicity field should contain one of the following: American Indian or Alaskan Native, Asian or Asian American, Black or African American, Hawaiian Native or Other Pacific Islander, Hispanic, Other, Two or more Races, White or Caucasian."
-        gender_e = "Invalid 'gender' value. Gender field should contain one of the following: Male, Female, Non-Binary."
-        status_e = "Invalid 'enrollment_status' value. Enrollment status field should contain one of the following: Active, Not Active."
-        grade_e = "Invalid 'grade' value. Grade field must be an integer."
-        absences_e = "Invalid 'absences' value. Absences field must be an integer."
-        attendance_e = "Invalid 'days_in_attendance' value. Days in attendance field must be an integer."
-        gpa_e = "Invalid 'gpa' value. GPA field must be a number."
+        ethnicity_e = "Invalid 'ethnicty' value."
+        gender_e = "Invalid 'gender' value."
+        status_e = "Invalid 'enrollment_status' value."
+        grade_e = "Invalid 'grade' value."
+        absences_e = "Invalid 'absences' value."
+        attendance_e = "Invalid 'days_in_attendance' value."
+        gpa_e = "Invalid 'gpa' value."
         
         # Perform checks
         error = ''
@@ -94,14 +105,16 @@ def lambda_handler(event, context):
         if error == '':
             d = {'filename': [key], 'formatted_properly': [True]}
             df.to_sql(os.environ["HASURA_TABLE"], engine, schema=os.environ["HASURA_SCHEMA"], if_exists = "append", index=False)
+            print("Uploaded to Hasura\n")
         else:
             d = {'filename': [key], 'formatted_properly': [False], 'error': [error]}
         error_df = pd.DataFrame(data=d)
         error_df.to_sql(os.environ["CSV_TABLE"], engine, schema=os.environ["HASURA_SCHEMA"], if_exists = "append", index=False)
-        print("Uploaded to Hasura\n")
-        
         
     except Exception as e:
+        d = {'filename': [key], 'formatted_properly': [False], 'error': ['CSV formatted improperly.']}
+        error_df = pd.DataFrame(data=d)
+        error_df.to_sql(os.environ["CSV_TABLE"], engine, schema=os.environ["HASURA_SCHEMA"], if_exists = "append", index=False)
         print(e)
         print('Error getting object {} from bucket {}..'.format(key, bucket))
         raise e
