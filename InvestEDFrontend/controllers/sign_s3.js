@@ -13,13 +13,16 @@ const S3_BUCKET = process.env.Bucket;
 // Now lets export this function so we can call it from somewhere else
 exports.sign_s3 = (req,res) => {
   const s3 = new aws.S3();  // Create a new instance of S3
-  const fileName = req.body.fileName;
-  const fileType = req.body.fileType;
+  metadata = {
+    'academic-year': req.body.academicYear,
+    'academic-term': req.body.academicTerm
+  }
 // Set up the payload of what we are sending to the S3 api
   const s3Params = {
     Bucket: S3_BUCKET,
-    Key: fileName,
-    ContentType: fileType,
+    Key: req.body.fileName,
+    ContentType: req.body.fileType,
+    Metadata: metadata,
   };
 // Make a request to the S3 API to get a signed URL which we can use to upload our file
 s3.getSignedUrl('putObject', s3Params, (err, data) => {
